@@ -1,5 +1,6 @@
 import joblib
 import numpy as np
+import matplotlib.pyplot as plt
 
 
 def load_data(filename):
@@ -47,6 +48,14 @@ def load_model(filename):
     return model
 
 
+def create_matrix_x(x, y):
+    ones_col_vec = np.ones(shape=(y.shape[0], 1))
+    cosx = np.cos(x[:, 1]).reshape((-1, 1))
+    x_2 = np.power(x[:, 0], 2).reshape((-1, 1))
+    matrix_X = np.hstack((ones_col_vec, x, cosx, x_2))
+    return matrix_X
+
+
 if __name__ == '__main__':
     # Load the data
     # This will be replaced with the test data when grading the assignment
@@ -60,10 +69,14 @@ if __name__ == '__main__':
     # Load the trained model
     baseline_model_path = './baseline_model.pickle'
     baseline_model = load_model(baseline_model_path)
+    linear_regression_model_path = './linear_regression.pickle'
+    linear_regression_model = load_model(linear_regression_model_path)
 
     # Predict on the given samples
     y_pred = baseline_model.predict(x)
-
+    # TODO: check if the predict has to be on the given sample or on the matrix generated
+    matrix = create_matrix_x(x, y)
+    y_pred_lin_reg = linear_regression_model.predict(matrix)
 
     ############################################################################
     # STOP EDITABLE SECTION: do not modify anything below this point.
@@ -72,3 +85,5 @@ if __name__ == '__main__':
     # Evaluate the prediction using MSE
     mse = evaluate_predictions(y_pred, y)
     print('MSE: {}'.format(mse))
+    mse_reg = evaluate_predictions(y_pred_lin_reg, y)
+    print('MSE: {}'.format(mse_reg))
