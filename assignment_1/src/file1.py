@@ -4,7 +4,18 @@ from sklearn.metrics import mean_squared_error
 from numpy import cos
 from assignment_1.deliverable.run_model import load_data, create_matrix_x
 import matplotlib.pyplot as plt
-import pickle
+
+from assignment_1.src.utils import save_sklearn_model
+
+
+def polynomial_function(x, theta_hat):
+    """
+        definition for linear function
+        :param x: numpy array of shape, theta: number of input parameters
+        :return y
+    """
+    return theta_hat[0] + theta_hat[1] * x[:, 0] + theta_hat[2] * x[:, 1] + theta_hat[3] * cos(x[:, 1]) + theta_hat[
+        4] * pow(x[:, 0], 2)
 
 
 def main():
@@ -24,31 +35,19 @@ def main():
     # get coefficient
     theta_hat = lr.coef_
 
-    # predict function
-    y_pred = lr.predict(matrix_x)
-    # calculate Mean squared error
-    error = mean_squared_error(y, y_pred)
-    print(error)
-
     # plot 3d figure
     fig = plt.figure()
     ax = plt.axes(projection='3d')
     ax.plot_trisurf(x[:, 0], x[:, 1], polynomial_function(x, theta_hat), cmap='viridis', edgecolor='none')
 
     # Saving into pickle file object LinearRegression
-    with open(Path('../deliverable/linear_regression.pickle'), 'wb') as f:
-        pickle.dump(lr, f)
-    pass
+    save_sklearn_model(lr, Path('../deliverable/linear_regression.pickle'))
 
-
-def polynomial_function(x, theta_hat):
-    """
-        definition for linear function
-        :param x: numpy array of shape, theta: number of input parameters
-        :return y
-    """
-    return theta_hat[0] + theta_hat[1] * x[:, 0] + theta_hat[2] * x[:, 1] + theta_hat[3] * cos(x[:, 1]) + theta_hat[
-        4] * pow(x[:, 0], 2)
+    # predict function
+    y_pred = lr.predict(matrix_x)
+    # calculate Mean squared error
+    mse = mean_squared_error(y, y_pred)
+    print('MSE: {}'.format(mse))
 
 
 if __name__ == '__main__':
