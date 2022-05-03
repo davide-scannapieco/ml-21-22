@@ -85,5 +85,3 @@ if __name__ == '__main__':
     # Evaluate the prediction using MSE
     mse = evaluate_predictions(y_pred, y)
     print('MSE: {}'.format(mse))
-    mse_reg = evaluate_predictions(y_pred_lin_reg, y)
-    print('MSE: {}'.format(mse_reg))
