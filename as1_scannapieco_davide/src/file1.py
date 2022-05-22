@@ -9,9 +9,9 @@ from sklearn.metrics import mean_squared_error
 from numpy import cos
 from sklearn.model_selection import train_test_split
 import tensorflow as tf
-from assignment_1.deliverable.run_model import load_data, create_matrix_x, load_model, evaluate_predictions
+from as1_scannapieco_davide.deliverable.run_model import load_data, create_matrix_x, load_model, evaluate_predictions
 
-from assignment_1.src.utils import save_sklearn_model
+from as1_scannapieco_davide.src.utils import save_sklearn_model
 
 
 def polynomial_function(x, theta_hat):
@@ -28,9 +28,10 @@ def create_ffnn(neurons=30, activation="tanh"):
     model = Sequential()
     model.add(Dense(neurons, activation=activation))
     model.add(Dense(neurons, activation=activation))
-    model.add(Dense(neurons, activation="sigmoid"))
+    model.add(Dense(neurons, activation=activation))
+    model.add(Dense(neurons, activation=activation))
     model.add(Dense(1, activation="linear"))
-    model.compile(optimizer=tf.keras.optimizers.Adam(learning_rate=0.01), loss='mse', metrics=["mse"])
+    model.compile(optimizer=tf.keras.optimizers.Adam(learning_rate=0.001), loss='mse', metrics=["mse"])
 
     return model
 
@@ -56,7 +57,7 @@ def main():
 
     ## TASK 1
     # Create object LinearRegression, assume data is centered
-    lr = LinearRegression()
+    lr = LinearRegression(fit_intercept=False)
     X_t, X_tst_lr, y_t, y_tst_lr = train_test_split(matrix_x, y, test_size=0.1, shuffle=True)
     lr.fit(X_t, y_t)
 
@@ -69,7 +70,7 @@ def main():
     y_pred_lr = lr.predict(X_tst_lr)
     # calculate error for linear regression (used for T test)
     lr_e = (y_tst_lr - y_pred_lr) ** 2
-    mean_lr = lr_e.mean()
+    mean_lr_e = lr_e.mean()
     # calculate Mean squared error
     mse_lr = mean_squared_error(y_pred_lr, y_tst_lr)
     print(f'Linear MSE: {mse_lr}')
@@ -80,11 +81,11 @@ def main():
     #
     # TASK 2
     # neurons - activation
-    model_parameters = [(30, "tanh")]
+    model_parameters = [(30, "tanh"), (15, "tanh"), (10, "tanh"), (20, "tanh")]
     epochs = 500
     # variable to choose the best model
     mse_list = []
-    early_stopping = tf.keras.callbacks.EarlyStopping(monitor='loss', patience=50, mode='min'),
+    early_stopping = tf.keras.callbacks.EarlyStopping(monitor='loss', patience=70, mode='min'),
     # Choose which model is the best one according to MSE
     for (neurons, activation) in model_parameters:
         print(f'Training NN with {neurons} neurons and {activation} activation')
@@ -99,6 +100,9 @@ def main():
     best_model = create_ffnn(neurons=neurons, activation=activation)
     best_model.fit(X_t, y_t, validation_data=(X_atr, y_atr), batch_size=32, epochs=epochs, verbose=0)
     best_model.summary()
+
+
+    save_sklearn_model(best_model, Path('../deliverable/non_linear_regression.pickle'))
     print("\n")
     # predict on best model
     y_pred_non_linear = best_model.predict(X_tst)
@@ -107,12 +111,7 @@ def main():
 
     # calculate errors of non linear regression
     nn_e = (y_tst - y_pred_non_linear) ** 2
-    nn_mean = (y_tst - y_pred_non_linear).mean()
-
-    mean_nl = nn_e.mean()
-    T = nn_mean
-    T /= np.sqrt(variance(nn_e) / len(X_tst))
-    print(f'T value of nl is in  (-1.96, 1.96)? {T}')
+    nn_mean = nn_e.mean()
     mse_nl = mean_squared_error(y_tst, y_pred_non_linear)
     print(f'Non Linear MSE: {mse_nl}')
     print("\n")
@@ -127,7 +126,7 @@ def main():
 
     #
     # Test statistics
-    t_test = (mean_nl - mean_lr)
+    t_test = (nn_mean - mean_lr_e)
     t_test /= np.sqrt(v_nn / len(X_tst) + v_lr / len(X_tst_lr))
     print(f"is T={t_test} in 95\% confidence interval (-1.96, 1.96) ?")
     #
@@ -135,6 +134,8 @@ def main():
     # TEST for BONUS
     baseline_model_path = Path('../deliverable/baseline_model.pickle')
     baseline_model = load_model(baseline_model_path)
+
+    # print(baseline_model.get_params())
 
     # predict on the given sample
     y_pred_base = baseline_model.predict(X_tst)
@@ -147,8 +148,8 @@ def main():
     mse_base = mean_squared_error(y_tst, y_pred_base)
     print(f'mse base equal : {mse_base}')
 
-    t_test = (mean_nl - mean_e_base)
-    t_test /= np.sqrt(v_nn / len(X_tst) + v_base / len(X_tst))
+    t_test = (nn_mean - mean_e_base)
+    t_test /= np.sqrt((v_nn  + v_base) / len(X_tst))
     print(f"is T={t_test} in 95\% confidence interval (-1.96, 1.96) ?")
 
 

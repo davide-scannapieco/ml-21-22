@@ -71,12 +71,24 @@ if __name__ == '__main__':
     baseline_model = load_model(baseline_model_path)
     linear_regression_model_path = './linear_regression.pickle'
     linear_regression_model = load_model(linear_regression_model_path)
+    non_linear_regression_path = './non_linear_regression.pickle'
+    non_linear_regression_model = load_model(non_linear_regression_path)
 
     # Predict on the given samples
     y_pred = baseline_model.predict(x)
     # TODO: check if the predict has to be on the given sample or on the matrix generated
     matrix = create_matrix_x(x, y)
     y_pred_lin_reg = linear_regression_model.predict(matrix)
+    y_pred_nl_reg = non_linear_regression_model.predict(x)
+    y_pred_nl_reg = np.squeeze(np.asarray(y_pred_nl_reg))
+
+    mse_non_lin = evaluate_predictions(y_pred_nl_reg, y)
+    mse_lin = evaluate_predictions(y_pred_lin_reg, y)
+    print(f'theta hat coefficients = {linear_regression_model.coef_}')
+    print(f'MSE linear: {mse_lin}')
+    print(f'MSE non linear: {mse_non_lin}')
+
+
 
     ############################################################################
     # STOP EDITABLE SECTION: do not modify anything below this point.
