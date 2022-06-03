@@ -28,7 +28,7 @@ def main():
     def build_fully_connected_neural_network(lr=0.003, n=20):
         model = Sequential()
         model.add(Flatten())
-        model.add(Dense(n, activation='relu', input_shape=(32, 32, 3)))
+        model.add(Dense(n, activation='relu'))
         model.add(Dense(n, activation='relu'))
         model.add(Dense(n_classes, activation='softmax'))
 
