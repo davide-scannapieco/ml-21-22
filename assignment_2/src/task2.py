@@ -10,7 +10,6 @@ from assignment_2.src.task1 import show, initial_setup
 def main():
     # TASK 2 step 1 and 2 same as TASK 1
     x_train, x_test, y_train, y_test = initial_setup()
-    n_classes = 3
 
     def evaluate_predictions(y_true, y_pred):
         """
@@ -25,17 +24,14 @@ def main():
         assert y_true.shape == y_pred.shape
         return ((y_true - y_pred) ** 2).mean()
 
-    def build_fully_connected_neural_network(lr=0.003, n=20):
-        model = Sequential()
-        model.add(Flatten())
-        model.add(Dense(n, activation='relu'))
-        model.add(Dense(n, activation='relu'))
-        model.add(Dense(n_classes, activation='softmax'))
+    model = Sequential()
+    model.add(Flatten())
+    model.add(Dense(20, activation='relu'))
+    model.add(Dense(20, activation='relu'))
+    model.add(Dense(3, activation='softmax'))
 
-        model.compile(optimizer=RMSprop(lr=lr), loss='categorical_crossentropy', metrics=['accuracy'])
-        return model
+    model.compile(optimizer=RMSprop(lr=0.003), loss='categorical_crossentropy', metrics=['accuracy'])
 
-    model = build_fully_connected_neural_network()
     epochs = 500
     batch_size = 128
     early_stopping = EarlyStopping(monitor='val_accuracy', patience=10, restore_best_weights=True)
@@ -55,10 +51,6 @@ def main():
 
     loss, accuracy = model.evaluate(x_test, y_test)
     print(f'Test Loss: {loss}  -  Accuracy: {accuracy}')
-
-    y_pred = model.predict(x_test)
-    mse = evaluate_predictions(y_test, y_pred)
-    print(f'MSE: {mse}')
 
 
 if __name__ == '__main__':

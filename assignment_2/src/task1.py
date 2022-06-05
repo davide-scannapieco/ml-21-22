@@ -98,6 +98,7 @@ def build_neural_network_model(lr=0.003, n=8):
     return model
 
 
+# Grid Search Model
 def optional_configuration_model(x_train, y_train, x_test, y_test, early_stopping, batch_size, epochs):
     best_model, best_lr, best_n, best_acc = 0, 0, 0, 0
     l_rates = [0.01, 0.0001]
@@ -155,10 +156,6 @@ def main():
 
     loss, accuracy = model.evaluate(x_test, y_test)
     print(f'Test Loss: {loss}  -  Accuracy: {accuracy}')
-
-    y_pred = model.predict(x_test)
-    mse = evaluate_predictions(y_test, y_pred)
-    print(f'MSE: {mse}')
 
     # Optional Task
     #
