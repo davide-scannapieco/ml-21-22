@@ -30,4 +30,4 @@ if __name__ == '__main__':
 
     T = (best_accuracy - accuracy)
     T /= np.sqrt(v_model_best_task1 / len(x_test) + v_model_task1 / len(x_test))
-    print("is T={} in 95\% confidence interval (-1.96, 1.96) ?".format(T))
+    print(f"is T={T} in 95% confidence interval (-1.96, 1.96) ?")

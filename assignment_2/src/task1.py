@@ -10,6 +10,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 from PIL import Image
 
+# Dictionary used as enum to display the correct name class of each image.
 idx_to_label = {
     0: 'airplane',
     1: 'automobile',
@@ -45,7 +46,8 @@ def plot_sample(imgs, labels, nrows, ncols, resize=None, tograyscale=False):
 def initial_setup():
     (x_train, y_train), (x_test, y_test) = load_cifar10()
 
-    # plot_sample(x_train, y_train, 3, 3)
+    # This is just to plot a sample of the dataset.
+    plot_sample(x_train, y_train, 3, 3)
 
     # Normalization pixels in [0,1] range
     x_train = x_train / 255.
@@ -89,7 +91,7 @@ def optional_configuration_model(x_train, y_train, x_test, y_test, early_stoppin
     best_model, best_lr, best_n, best_acc = 0, 0, 0, 0
     l_rates = [0.01, 0.0001]
     n_neurons = [16, 64]
-
+    # To create a search grid we just do to for loops and we save the model with the best accuracy
     for l_rate in l_rates:
         for n_neuron in n_neurons:
             print(f'Learning Rate : {l_rate}   and #neurons: {n_neuron}')
@@ -109,6 +111,7 @@ def optional_configuration_model(x_train, y_train, x_test, y_test, early_stoppin
                 best_lr = l_rate
                 best_n = n_neuron
                 best_acc = accuracy
+    #Print the loss and accuracy and save the model under deliverable folder
     loss, accuracy = best_model.evaluate(x_test, y_test)
     print(f'Test Loss: {loss}  -  Accuracy: {accuracy}')
     save_keras_model(best_model, "../deliverable/best_nn_task1.h5")
@@ -119,12 +122,13 @@ def main():
     # Download and Load CIFAR-10 Dataset
     x_train, x_test, y_train, y_test = initial_setup()
 
+    # We build the model based on the hyperparameter provided in the task 1
     model = build_neural_network_model()
     # # train the model
     epochs = 500
     batch_size = 128
     early_stopping = EarlyStopping(monitor='val_accuracy', patience=10, restore_best_weights=True)
-    #
+
     h = model.fit(x_train,
                   y_train,
                   batch_size=batch_size,
@@ -132,14 +136,13 @@ def main():
                   validation_split=0.2,
                   callbacks=[early_stopping])
 
-    # save model
+    # save model in the deliverable folder
     save_keras_model(model, "../deliverable/nn_task1.h5")
 
     # Plot with epochs on x-axis, train accuracy and validation accuracy
     show(h)
 
     # Assess performance on test set
-
     loss, accuracy = model.evaluate(x_test, y_test)
     print(f'Test Loss: {loss}  -  Accuracy: {accuracy}')
 
