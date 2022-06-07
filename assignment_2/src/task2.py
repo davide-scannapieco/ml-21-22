@@ -11,19 +11,6 @@ def main():
     # TASK 2 step 1 and 2 same as TASK 1
     x_train, x_test, y_train, y_test = initial_setup()
 
-    def evaluate_predictions(y_true, y_pred):
-        """
-        Evaluates the mean squared error between the values in y_true and the values
-        in y_pred.
-        ### YOU CAN NOT EDIT THIS FUNCTION ###
-
-        :param y_true: Numpy array, the true target values from the test set;
-        :param y_pred: Numpy array, the values predicted by your model.
-        :return: float, the the mean squared error between the two arrays.
-        """
-        assert y_true.shape == y_pred.shape
-        return ((y_true - y_pred) ** 2).mean()
-
     model = Sequential()
     model.add(Flatten())
     model.add(Dense(20, activation='relu'))

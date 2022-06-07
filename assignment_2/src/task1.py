@@ -66,20 +66,6 @@ def show(h):
     plt.show()
 
 
-def evaluate_predictions(y_true, y_pred):
-    """
-    Evaluates the mean squared error between the values in y_true and the values
-    in y_pred.
-    ### YOU CAN NOT EDIT THIS FUNCTION ###
-
-    :param y_true: Numpy array, the true target values from the test set;
-    :param y_pred: Numpy array, the values predicted by your model.
-    :return: float, the the mean squared error between the two arrays.
-    """
-    assert y_true.shape == y_pred.shape
-    return ((y_true - y_pred) ** 2).mean()
-
-
 # Build neural network
 def build_neural_network_model(lr=0.003, n=8):
     model = Sequential()
